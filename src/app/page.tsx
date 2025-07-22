@@ -1,41 +1,19 @@
+"use client"
 
-"use server"
-"use server";
-import { getQueryClient, trpc } from "@/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import React, { Suspense } from "react";
-import Client from "./client";
+import { useTRPC } from '@/trpc/tRPC-wrapper'
+import { useMutation } from '@tanstack/react-query';
+import React from 'react'
 
-const page = async () => {
-  const queryClient = getQueryClient();
-
-  // Prefetching query on server
-  // this only iniitiates the call only for the populating the suspensed Client 
-  await queryClient.prefetchQuery(trpc.hello.queryOptions({ text: "bhargav" }));
-
+const page = () => {
+  const trpc = useTRPC();
+  const invoke  = useMutation(trpc.invoke.mutationOptions({}))
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading ...</p>}>
-        <Client />
-      </Suspense>
-    </HydrationBoundary>
-  );
-};
+    <div className='w-screen h-screen flex justify-center  items-center bg-black'>
+      <button className='p-4 bg-sky-100 text-black rounded-full' onClick={()=>{
+        invoke.mutate({text:"John"})
+      }}>Invoke Backgroun Job</button>
+    </div>
+  )
+}
 
-export default page;
-
-
-
-// 'use client'
-
-// import { useTRPC } from "@/trpc/tRPC-wrapper";
-// import { useQuery } from "@tanstack/react-query";
-// import React from "react";
-
-// const page = () => {
-//   const trpc = useTRPC();
-//   const { data } = useQuery(trpc.hello.queryOptions({text:"bhargav"}));
-//   return <div> greetings : {data?.greeting}</div>;
-// };
-
-// export default page;
+export default page
