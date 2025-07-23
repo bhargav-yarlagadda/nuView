@@ -1,0 +1,17 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (4im7shgnj1ly7d15e7v4) or template name (nu-view) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox("nu-view") # Sync sandbox
+# sandbox = await AsyncSandbox.create("nu-view") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('nu-view')
+
+team_id = "d288b874-03c7-447e-bb40-4cb07e830ac0"
+start_cmd = "/compile_page.sh"
+dockerfile = "e2b.Dockerfile"
+template_name = "nu-view"
+template_id = "4im7shgnj1ly7d15e7v4"
