@@ -3,7 +3,7 @@ import {Sandbox} from "@e2b/code-interpreter"
 // inngest background jobs 
 import {   openai, createAgent, createTool, AnyZodType, createNetwork } from "@inngest/agent-kit";
 import { getSandBox, lastAssistantTextMessageContent } from "./utils";
-import z from "zod";
+import {z} from "zod";
 import { PROMPT } from "./prompts";
 
 
@@ -20,43 +20,44 @@ export const helloWorld = inngest.createFunction(
       name: "code-agent",
       description:"You are an expert coding agent",
       system:PROMPT,
-      model: openai({ model: "gpt-4.1",
+      model: openai({ model: "gpt-4o",
+        
         defaultParameters:{
           temperature:0.1,
           
         }
         }),
       tools:[
-        createTool({
-          name:"terminal",
-          description:"Use the terminal to run the commands",
-          parameters: z.object({
-            command: z.string(),
-          })  as unknown as AnyZodType,
-          handler:async ({command},{step})=>{
-            return await step?.run("terminal",async ()=>{
-              const buffers = {
-                stdout:"",
-                stderr:"",
-              }
-              try {
-                const sandBox = await getSandBox(sandBoxId)
-                const result = await sandBox.commands.run(command,{
-                  onStdout:(data:string)=>{
-                    buffers.stdout = data
-                  },
-                  onStderr:(data:string)=>{
-                    buffers.stdout = data
-                  }
-                })
-                return result.stdout
-              } catch (error:any) {
-                console.error(`Command failed :${error} \n stdout: ${buffers.stdout} \n  stderr: ${buffers.stderr} `)
-                return `Command failed :${error} \n stdout: ${buffers.stdout} \n  stderr: ${buffers.stderr} `
-              }
-            })
-          },
-        }),
+          createTool({
+            name:"terminal",
+            description:"Use the terminal to run the commands",
+            parameters: z.object({
+              command: z.string(),
+            }),
+            handler:async ({command},{step})=>{
+              return await step?.run("terminal",async ()=>{
+                const buffers = {
+                  stdout:"",
+                  stderr:"",
+                }
+                try {
+                  const sandBox = await getSandBox(sandBoxId)
+                  const result = await sandBox.commands.run(command,{
+                    onStdout:(data:string)=>{
+                      buffers.stdout = data
+                    },
+                    onStderr:(data:string)=>{
+                      buffers.stdout = data
+                    }
+                  })
+                  return result.stdout
+                } catch (error:any) {
+                  console.error(`Command failed :${error} \n stdout: ${buffers.stdout} \n  stderr: ${buffers.stderr} `)
+                  return `Command failed :${error} \n stdout: ${buffers.stdout} \n  stderr: ${buffers.stderr} `
+                }
+              })
+            },
+          }),
         createTool({
           name:"createOrUpdateFiles",
           description:"create or update files in Sandbox",
@@ -67,7 +68,7 @@ export const helloWorld = inngest.createFunction(
                 content:z.string(),
               })
             )
-          }) as unknown as AnyZodType,
+          }),
           handler:async ({files},{step,network})=>{
             const newFiles  = await step?.run("createOrUpdateFile",async ()=>{
                 try {
@@ -93,7 +94,7 @@ export const helloWorld = inngest.createFunction(
           description:"Read files from sandbox",
           parameters: z.object({
             files: z.array(z.string())
-          }) as unknown as AnyZodType ,
+          })  ,
           handler:async ({files},{step})=>{
             return await step?.run("readFiles",async ()=>{
               try {
