@@ -144,7 +144,7 @@ export const helloWorld = inngest.createFunction(
       }
     })
     const result = await network.run(event.data.value)
-    const sandBoxURL = step.run("get-sandbox-url",async ()=>{
+    const sandBoxURL = await step.run("get-sandbox-url",async ()=>{
       const sandBox  =await getSandBox(sandBoxId)
       const host =  sandBox.getHost(3000)
       return `https://${host}`
