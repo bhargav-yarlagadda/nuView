@@ -5,6 +5,7 @@ import {   openai, createAgent, createTool, AnyZodType, createNetwork } from "@i
 import { getSandBox, lastAssistantTextMessageContent } from "./utils";
 import {z} from "zod";
 import { PROMPT } from "./prompts";
+import prisma from "@/lib/prisma";
 
 
 
@@ -148,7 +149,26 @@ export const helloWorld = inngest.createFunction(
       const sandBox  =await getSandBox(sandBoxId)
       const host =  sandBox.getHost(3000)
       return `https://${host}`
-    })  
+    })
+    
+    await step.run("save-result",async ()=>{
+      return await prisma.message.create({
+        data:{
+          content:result.state.data.summary,
+          role:"ASSISTANT",
+          type:"RESULT",
+          fragment:{
+            create:{
+              sandboxUrl:sandBoxURL,
+              title:"Fragment",
+              files:result.state.data.files 
+            }
+          }
+
+        }
+      })
+    })
+
     return {
         url:sandBoxURL,
         title:"Fragment",
