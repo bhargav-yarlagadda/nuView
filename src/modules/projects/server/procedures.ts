@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import z from "zod";
 import { generateSlug } from "random-word-slugs";
+import { TRPCError } from "@trpc/server";
 
 export const projectRouter = createTRPCRouter({
   // create is the name of the procedure
@@ -30,13 +31,31 @@ export const projectRouter = createTRPCRouter({
 
       await inngest.send({
         name: "test/hello.world",
-        data: { 
-            value: input.value, 
-            projectId: createdProject.id 
+        data: {
+          value: input.value,
+          projectId: createdProject.id,
         },
       });
 
       return createdProject;
+    }),
+
+  getOneProject: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const project = await prisma.project.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+      if(!project){
+        throw new TRPCError({code:"NOT_FOUND",message:"Project Not found"})
+      }
+      return project;
     }),
   getProjects: baseProcedure.query(async () => {
     // returns all the messages
