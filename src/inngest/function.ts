@@ -85,7 +85,7 @@ export const helloWorld = inngest.createFunction(
                 }
             })
             if(typeof newFiles === "object"){
-              network.state.data.file = newFiles
+              network.state.data.files = newFiles
             }
           }
 
@@ -154,7 +154,7 @@ export const helloWorld = inngest.createFunction(
     await step.run("save-result",async ()=>{
       return await prisma.message.create({
         data:{
-          content:result.state.data.summary,
+          content:result.state.data.summary || "No Summary Available",
           role:"ASSISTANT",
           type:"RESULT",
           fragment:{
