@@ -3,12 +3,13 @@
 
 import { messageRouter } from "@/modules/message/server/procedures";
 import { baseProcedure, createTRPCRouter } from "../init";
+import { projectRouter } from "@/modules/projects/server/procedures";
 
 // import { inngest } from '@/inngest/client';
 export const appRouter = createTRPCRouter({
 
-    messages:messageRouter
-
+    messages:messageRouter,
+    projects:projectRouter
   // invoke:baseProcedure
   //       .input(z.object({
   //           value:z.string()

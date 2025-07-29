@@ -154,6 +154,7 @@ export const helloWorld = inngest.createFunction(
     await step.run("save-result",async ()=>{
       return await prisma.message.create({
         data:{
+          projectId:event.data.projectId,
           content:result.state.data.summary || "No Summary Available",
           role:"ASSISTANT",
           type:"RESULT",
