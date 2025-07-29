@@ -123,7 +123,7 @@ export const helloWorld = inngest.createFunction(
         onResponse:async ({result,network})=>{
           const lastAssistantMessageText = lastAssistantTextMessageContent(result)
           if(lastAssistantMessageText && network){
-            if(lastAssistantMessageText.includes("<tast_summary>")){
+            if(lastAssistantMessageText.includes("<task_summary>")){
               network.state.data.summary = lastAssistantMessageText
             }
           }
