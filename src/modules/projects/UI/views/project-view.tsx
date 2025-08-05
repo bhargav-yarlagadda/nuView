@@ -9,6 +9,8 @@ import { Suspense, useState } from "react";
 import Loading from "../components/Loader";
 import { Fragment } from "@/generated/prisma";
 import ProjectHeader from "../components/ProjectHeader";
+import FragmentWeb from "../components/FragmentWeb";
+import FragmentWebPlaceHolder from "../components/FragmentWebPlaceHolder";
 interface Props {
   projectId: string;
 }
@@ -38,7 +40,11 @@ export const ProjectView = ({ projectId }: Props) => {
           defaultSize={65}
           minSize={50}
           className="flex flex-col min-h-0"
-        ></ResizablePanel>
+        >
+        {
+          activeFragment ? <FragmentWeb data={activeFragment } /> :<FragmentWebPlaceHolder/>
+        }
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );
