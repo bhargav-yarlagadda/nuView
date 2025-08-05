@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <!-- Gradient for petals -->
+    <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#5ABFFF"/>
+      <stop offset="100%" stop-color="#7B3FE4"/>
+    </radialGradient>
+    <!-- Gradient for center glow -->
+    <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7B3FE4" stop-opacity="0.2"/>
+    </radialGradient>
+    <!-- Petal shape -->
+    <g id="petal">
+      <polygon points="300,140 340,300 300,460 260,300" fill="url(#petalGrad)" opacity="0.85"/>
+      <polygon points="300,180 325,300 300,420 275,300" fill="url(#petalGrad)" opacity="0.5"/>
+    </g>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="300" cy="300" r="200" fill="none" stroke="url(#petalGrad)" stroke-width="12" opacity="0.6"/>
+
+  <!-- Inner glow -->
+  <circle cx="300" cy="300" r="80" fill="url(#centerGrad)"/>
+
+  <!-- Petal rotations -->
+  <use href="#petal" transform="rotate(0 300 300)"/>
+  <use href="#petal" transform="rotate(30 300 300)"/>
+  <use href="#petal" transform="rotate(60 300 300)"/>
+  <use href="#petal" transform="rotate(90 300 300)"/>
+  <use href="#petal" transform="rotate(120 300 300)"/>
+  <use href="#petal" transform="rotate(150 300 300)"/>
+  <use href="#petal" transform="rotate(180 300 300)"/>
+  <use href="#petal" transform="rotate(210 300 300)"/>
+  <use href="#petal" transform="rotate(240 300 300)"/>
+  <use href="#petal" transform="rotate(270 300 300)"/>
+  <use href="#petal" transform="rotate(300 300 300)"/>
+  <use href="#petal" transform="rotate(330 300 300)"/>
+</svg>
