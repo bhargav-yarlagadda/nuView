@@ -1,7 +1,7 @@
 import React, { useState, memo } from "react";
 import { Fragment } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
-import { CopyIcon, ExternalLink, RefreshCcwIcon } from "lucide-react";
+import {  ExternalLink, RefreshCcwIcon } from "lucide-react";
 import { toast } from "sonner";
 import Hint from "./Hint";
 

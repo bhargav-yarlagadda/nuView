@@ -2,28 +2,39 @@ import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 const ShimmerMessages = () => {
-  const loaderMessages = [
-    "Warming up the engines...",
-    "Fetching data from the void...",
-    "Almost there, hold tight!",
-    "Good things take time...",
-    "Summoning the magic...",
-    "Just a moment, preparing awesomeness...",
-    "Optimizing pixels and bits...",
-    "Loading… but make it stylish.",
-    "Bringing everything together...",
-    "Hang tight, we’re almost done!",
-    "Cooking something amazing for you...",
-    "Aligning the stars...",
-    "Brewing some fresh content...",
-    "Smoothing out the rough edges...",
-    "Counting to infinity… just kidding!",
-    "Spinning up some magic dust...",
-    "Checking all the boxes...",
-    "Syncing with the universe...",
-    "Almost ready, don’t blink!",
-    "Finalizing the finalization...",
-  ];
+const loaderMessages = [
+  "Warming up the engines...",
+  "Poking the servers to wake them up...",
+  "Sharpening the code knives...",
+  "Fetching data from the void...",
+  "Untangling some digital spaghetti...",
+  "Summoning the magic...",
+  "Brewing some fresh content...",
+  "Charging creativity batteries...",
+  "Optimizing pixels and bits...",
+  "Painting the pixels perfectly...",
+  "Sneaking in some extra awesomeness...",
+  "Cooking something amazing for you...",
+  "Aligning the stars...",
+  "Calibrating your experience...",
+  "Spinning up some magic dust...",
+  "Syncing with the universe...",
+  "Counting to infinity… just kidding!",
+  "Smoothing out the rough edges...",
+  "Making sure the ducks are in a row...",
+  "Wrestling with stubborn bytes...",
+  "Polishing every last detail...",
+  "Squeezing out some extra performance...",
+  "Bringing everything together...",
+  "Checking all the boxes...",
+  "Loading… but make it stylish.",
+  "Charging cosmic hamsters in the server wheel...",
+  "Good things take time...",
+  "Almost there, hold tight!",
+  "Almost ready, don’t blink!",
+  "Finalizing the finalization...",
+];
+
   const [currentMessageIndex,setCurrentMessageIndex] = useState(0)
   useEffect(()=>{
     const interval = setInterval(()=>{
