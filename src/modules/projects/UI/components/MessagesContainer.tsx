@@ -14,6 +14,7 @@ interface messageContainerProps{
 
 const MessagesContainer = ({ projectId,activeFragment,setActiveFragment }: messageContainerProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
+  let lastAssistantRef = useRef<string | null>(null);
   const trpc = useTRPC();
 
   const { data: messages } = useSuspenseQuery(
@@ -23,15 +24,17 @@ const MessagesContainer = ({ projectId,activeFragment,setActiveFragment }: messa
       refetchInterval:5000, // messages are re fetched after every 5 seconds
     })
   );
-  // TODO:
-  // Track last ASSISTANT message (if needed later)
-  // useEffect(() => {
-  //   const lastMessage = messages.findLast((msg) => msg.role === "ASSISTANT" && !!msg.fragment);
-  //   if (lastMessage && lastMessage.fragment) {
-  //     // set active fragment logic here
-  //     setActiveFragment(lastMessage.fragment)
-  //   }
-  // }, [messages,setActiveFragment]);
+  
+  
+  useEffect(() => {
+    const lastAssistantMessage = messages.findLast((message)=> message.role === "ASSISTANT")
+     if(lastAssistantMessage?.fragment && lastAssistantMessage.id != lastAssistantRef.current){
+      setActiveFragment(lastAssistantMessage.fragment)
+      lastAssistantRef.current = lastAssistantMessage.id
+     }
+
+    
+  }, [messages,setActiveFragment]);
 
   // Scroll to bottom whenever messages change
   useEffect(() => {

@@ -76,7 +76,7 @@ const FileExplorer = ({ files }: FileExplorerProps) => {
                   toast.success("File path copied!");
                 }}
               >
-                <FileTextIcon className="h-4 w-4" />
+                <CopyIcon className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Copy File Path</TooltipContent>

@@ -115,7 +115,7 @@ const TreeNodeComponent = ({
         size="sm"
         className={cn(
           "w-full justify-start gap-2 rounded-none px-2 hover:bg-accent",
-          isSelected && "bg-accent"
+          isSelected && " font-bold"
         )}
         onClick={handleClick}
       >
@@ -141,7 +141,7 @@ const TreeNodeComponent = ({
       </Button>
 
       {isFolder && isOpen && node.children && (
-        <ul className="ml-3 border-l border-border/30 pl-1">
+        <ul className="ml-2 border-l border-border/90 pl-1">
           {node.children.map((child) => (
             <TreeNodeComponent
               key={child.path}
