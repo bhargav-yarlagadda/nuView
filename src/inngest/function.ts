@@ -135,7 +135,7 @@ export const helloWorld = inngest.createFunction(
     const network  = createNetwork({
       name:"coding-agent-network",
       agents:[codeAgent],
-      maxIter:5, // before it was 15, if performance becomes poor please update this to 15.
+      maxIter:10, // if performance becomes poor please update this to 15.
       router:async({network})=>{
         const summary  = network.state.data.summary 
         if(summary){
