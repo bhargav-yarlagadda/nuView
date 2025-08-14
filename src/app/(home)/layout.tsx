@@ -1,19 +1,36 @@
 interface Props {
   children: React.ReactNode;
 }
+
 const Layout = ({ children }: Props) => {
   return (
-    <main className="flex flex-col min-h-screen max-h-screen">
+    <main className="relative flex flex-col min-h-screen">
+
+      {/* Background gradient (fixed) */}
       <div
         className="
-    absolute inset-0 -z-10 h-full w-full
-    bg-[radial-gradient(#dadde2_1px,transparent_1px)]
-    dark:bg-[radial-gradient(#6bb9ed_1px,transparent_1px)]
-    [background-size:16px_16px]
-  "
+          fixed inset-0 -z-20
+          bg-[linear-gradient(135deg,#25161Bx,#0a0a0a,#31363F,#000000)]
+          animate-[waveShift_10s_linear_infinite]
+          [background-size:400%_400%]
+        "
       />
 
-      <div className="flex-1 flex flex-col px-4 pb-4">{children}</div>
+      {/* Texture overlay (fixed) */}
+      <div
+        className="
+          fixed inset-0 -z-10
+          bg-[url('https://www.transparenttextures.com/patterns/asfalt-light.png')]
+          bg-repeat
+        "
+      />
+
+    
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex flex-col px-4 pb-4">
+        {children}
+      </div>
     </main>
   );
 };

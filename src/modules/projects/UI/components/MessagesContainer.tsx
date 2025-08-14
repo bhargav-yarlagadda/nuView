@@ -24,7 +24,7 @@ const MessagesContainer = ({ projectId,activeFragment,setActiveFragment }: messa
       refetchInterval:5000, // messages are re fetched after every 5 seconds
     })
   );
-  
+   
   
   useEffect(() => {
     const lastAssistantMessage = messages.findLast((message)=> message.role === "ASSISTANT")
