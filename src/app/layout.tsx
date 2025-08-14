@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "New View",
+  title: "Lumina",
   icons: {
     icon: "/new-view.svg",
   },

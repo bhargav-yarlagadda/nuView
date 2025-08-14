@@ -56,7 +56,7 @@ const AssisitantMessage = ({
         {/* TODO: add logo */}
         <div className="flex gap-2 items-center">
             <Image src="/new-view.svg" alt="" height={40} width={40}  className="rounded-full" />
-            <span className="text-sm font-medium">nuView</span>
+            <span className="text-sm font-medium">Lumina</span>
         </div>
        
         <span className="text-xs font-medium text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">

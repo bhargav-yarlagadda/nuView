@@ -72,25 +72,6 @@ const ProjectForm = () => {
 
   return (
     <div>
-<div className="flex flex-wrap justify-center  md:justify-start  gap-2  mb-3">
-  {predefinedPrompts.map((chip) => (
-    <button
-      key={chip}
-      type="button"
-      onClick={() => insertChip(chip)}
-      className="
-        px-4 py-1 cursor-pointer rounded-md
-        bg-yellow-400 text-gray-900  shadow-sm
-         transition-all duration-200 ease-in-out font-mono text-sm
-        dark:bg-gray-800 dark:text-gray-100  font-light
-      "
-    >
-      {chip}
-    </button>
-  ))}
-</div>
-
-
 
       <Form {...form}>
         <form
@@ -161,6 +142,23 @@ const ProjectForm = () => {
           </div>
         </form>
       </Form>
+      <div className="flex flex-wrap justify-center   gap-2  mb-3">
+  {predefinedPrompts.map((chip) => (
+    <button
+      key={chip}
+      type="button"
+      onClick={() => insertChip(chip)}
+      className="
+        px-4 py-1 cursor-pointer rounded-md
+        bg-yellow-400 text-gray-900  shadow-sm
+         transition-all duration-200 ease-in-out font-mono text-sm
+        dark:bg-gray-800 dark:text-gray-100  font-light
+      "
+    >
+      {chip}
+    </button>
+  ))}
+</div>
     </div>
   );
 };

@@ -16,14 +16,7 @@ const Layout = ({ children }: Props) => {
         "
       />
 
-      {/* Texture overlay (fixed) */}
-      <div
-        className="
-          fixed inset-0 -z-10
-          bg-[url('https://www.transparenttextures.com/patterns/asfalt-light.png')]
-          bg-repeat
-        "
-      />
+      
 
     
 

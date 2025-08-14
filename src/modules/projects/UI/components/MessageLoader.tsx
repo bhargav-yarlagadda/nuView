@@ -66,7 +66,7 @@ const MessageLoader = () => {
              className="shrink-0  rounded-full">
 
              </Image>
-             <span className="text-sm font-mono font-medium ">nuView</span>
+             <span className="text-sm font-mono font-medium ">Lumina</span>
         </div>
         <div className="pl-8.5 flex flex-col gap-y-4">
             <ShimmerMessages/>
