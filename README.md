@@ -1,10 +1,10 @@
-# Nu-View 🚀
+# Lumina 🚀
 
-A sophisticated AI-powered web development platform built with Next.js 15, TypeScript, and modern web technologies. Nu-View enables developers to describe their desired web components or features in natural language, and the AI system generates interactive code fragments with live previews in real-time.
+A sophisticated AI-powered web development platform built with Next.js 15, TypeScript, and modern web technologies. Lumina enables developers to describe their desired web components or features in natural language, and the AI system generates interactive code fragments with live previews in real-time.
 
-## 🎯 What is Nu-View?
+## 🎯 What is Lumina?
 
-Nu-View is an intelligent coding assistant that transforms natural language descriptions into working web applications. It's designed for developers, designers, and anyone who wants to quickly prototype web interfaces without writing code from scratch.
+Lumina is an intelligent coding assistant that transforms natural language descriptions into working web applications. It's designed for developers, designers, and anyone who wants to quickly prototype web interfaces without writing code from scratch.
 
 ### Core Concept
 1. **User Input**: Describe what you want to build (e.g., "Create an animated hero section with a dark mode toggle")
@@ -67,7 +67,7 @@ Nu-View is an intelligent coding assistant that transforms natural language desc
 1. **Clone the repository**
    ```bash
    git clone <your-repo-url>
-   cd nu-view
+   cd Lumina
    ```
 
 2. **Install dependencies**
@@ -103,7 +103,7 @@ Nu-View is an intelligent coding assistant that transforms natural language desc
    OPENAI_API_KEY="your-openai-api-key"
    
    # Sandbox Configuration (OPTIONAL)
-   SANDBOX_NAME="nu-view"
+   SANDBOX_NAME="Lumina"
    ```
 
 4. **Database Setup**
@@ -168,7 +168,7 @@ Nu-View is an intelligent coding assistant that transforms natural language desc
 
 | Variable | Description | Default | Purpose |
 |----------|-------------|---------|---------|
-| `SANDBOX_NAME` | E2B sandbox identifier | `nu-view` | Sandbox naming |
+| `SANDBOX_NAME` | E2B sandbox identifier | `Lumina` | Sandbox naming |
 | `NEXT_PUBLIC_APP_URL` | Public app URL | `http://localhost:3000` | Client-side API calls |
 
 ## 🗄️ Database Schema
@@ -658,4 +658,4 @@ When reporting issues, please include:
 
 **Built with ❤️ using Next.js, TypeScript, and modern web technologies.**
 
-*Nu-View - Transform your ideas into stunning websites with AI-powered development.*
+*Lumina - Transform your ideas into stunning websites with AI-powered development.*
