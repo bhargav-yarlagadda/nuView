@@ -52,6 +52,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 - **Type Checking**: TypeScript strict mode
 - **Hot Reload**: Next.js development server with Turbopack
 
+
 ## 🚀 Getting Started
 
 ### Prerequisites
