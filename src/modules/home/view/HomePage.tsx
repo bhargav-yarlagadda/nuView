@@ -3,6 +3,7 @@ import React from 'react';
 import Typewriter from '../UI/TypeWriter';
 import { Section } from 'lucide-react';
 import ProjectForm from '../UI/ProjectForm';
+import ProjectTiles from '../UI/ProjectTiles';
 
 
 const HomePage = () => {
@@ -20,8 +21,12 @@ const HomePage = () => {
           <Typewriter />
         </div>
       </section>
-      <section >
+      <section>
         <ProjectForm />
+      </section>
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold mb-3">Your Projects</h2>
+        <ProjectTiles />
       </section>
     </div>
   );
