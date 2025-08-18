@@ -1,3 +1,5 @@
+import Navbar from "@/modules/home/UI/Navbar";
+
 interface Props {
   children: React.ReactNode;
 }
@@ -5,7 +7,7 @@ interface Props {
 const Layout = ({ children }: Props) => {
   return (
     <main className="relative flex flex-col min-h-screen">
-
+      <Navbar/> 
       {/* Background gradient (fixed) */}
       <div
         className="

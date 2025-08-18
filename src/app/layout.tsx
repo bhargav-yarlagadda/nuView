@@ -4,6 +4,8 @@ import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/tRPC-wrapper";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes"; // Clerk’s built-in dark base theme
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,22 +32,48 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <TRPCReactProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-          
+      <ClerkProvider
+        appearance={{
+          baseTheme: dark, // base dark theme
+          variables: {
+            colorPrimary: "#6366f1", // indigo-500
+            borderRadius: "0.75rem", // rounded-xl
+            fontSize: "14px",
+          },
+          elements: {
+            // Card container
+            card: "shadow-xl backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl",
+            // Header texts
+            headerTitle: "text-lg font-semibold text-white",
+            headerSubtitle: "text-sm text-gray-300",
+            // Social buttons
+            socialButtonsBlockButton:
+              "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700",
+            // Primary submit button
+            formButtonPrimary:
+              "bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg",
+            // Input fields
+            formFieldInput:
+              "bg-black/30 border border-white/20 text-white placeholder:text-gray-400 rounded-lg",
+          },
+        }}
+      >
+        <TRPCReactProvider>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <Toaster />
-            {children}
-          </ThemeProvider> 
-        </body>
-      </TRPCReactProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster />
+              {children}
+            </ThemeProvider>
+          </body>
+        </TRPCReactProvider>
+      </ClerkProvider>
     </html>
   );
 }
