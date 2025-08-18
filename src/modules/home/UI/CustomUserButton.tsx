@@ -26,7 +26,7 @@ const CustomUserButton = () => {
 
   if (!isLoaded) {
     return (
-      <div className="h-8 w-8 rounded-md bg-muted animate-pulse" />
+      <div className="h-8  w-8 rounded-md bg-muted animate-pulse" />
     )
   }
 
@@ -65,7 +65,7 @@ const CustomUserButton = () => {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="h-8 px-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-all duration-200 group"
+          className="h-8  px-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-all duration-200 group"
         >
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-200">

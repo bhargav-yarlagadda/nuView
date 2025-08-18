@@ -13,6 +13,7 @@ import { useTRPC } from "@/trpc/tRPC-wrapper";
 import { Form, FormField } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
 
 const formSchema = z.object({
   value: z
@@ -41,7 +42,7 @@ const ProjectForm = () => {
   const message = form.watch("value");
   const [isFocused, setIsFocused] = useState(false);
   const [showUsage, setShowUsage] = useState(false);
-
+  const clerk = useClerk()
   const trpc = useTRPC();
   const createProject = useMutation(
     trpc.projects.create.mutationOptions({
@@ -52,6 +53,9 @@ const ProjectForm = () => {
       },
       onError: (error: any) => {
         toast.error(error.message);
+        if(error.data?.code  === "UNAUTHORIZED"){
+          clerk.openSignIn()
+        }
       },
     })
   );

@@ -195,9 +195,9 @@ export const helloWorld = inngest.createFunction(
   async ({ event, step }) => {
     const sandBoxId = await step.run("get-sandbox-id", async () => {
       const sandBox = await Sandbox.create(process.env.SANDBOX_NAME || "nu-view",
-      // {
-      //   timeoutMs:600_000 ,
-      // }
+      {
+        timeoutMs:600_000 ,
+      }
     );
       return sandBox.sandboxId;
     });

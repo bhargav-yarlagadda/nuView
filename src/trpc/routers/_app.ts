@@ -12,7 +12,7 @@ export const appRouter = createTRPCRouter({
     projects:projectRouter
   // invoke:baseProcedure
   //       .input(z.object({
-  //           value:z.string()
+  //           v  alue:z.string()
   //       })).mutation(async ({input})=>{
   //         await inngest.send({
   //           name:"test/hello.world",

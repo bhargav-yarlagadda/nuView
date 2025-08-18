@@ -1,24 +1,25 @@
 import { inngest } from "@/inngest/client";
 import prisma from "@/lib/prisma";
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import z from "zod";
 import { generateSlug } from "random-word-slugs";
 import { TRPCError } from "@trpc/server";
 
 export const projectRouter = createTRPCRouter({
   // create is the name of the procedure
-  create: baseProcedure
+  create: protectedProcedure
     .input(
       z.object({
         value: z.string().min(1, { message: "message is required" }),
       })
-    )
-    .mutation(async ({ input }) => {
+    ) //context is passed from middleware created for proceteced Procedure
+    .mutation(async ({ input,ctx }) => {
       const createdProject = await prisma.project.create({
         data: {
           name: generateSlug(2, {
             format: "kebab",
           }),
+          userId:ctx.auth.userId,
           messages: {
             create: {
               content: input.value,
@@ -40,7 +41,7 @@ export const projectRouter = createTRPCRouter({
       return createdProject;
     }),
 
-  getOneProject: baseProcedure
+  getOneProject: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -57,12 +58,16 @@ export const projectRouter = createTRPCRouter({
       }
       return project;
     }),
-  getProjects: baseProcedure.query(async () => {
+  getProjects: protectedProcedure.query(async ({ctx}) => {
     // returns all the messages
     const messages = await prisma.project.findMany({
+       where:{
+        userId:ctx.auth.userId
+      },
       orderBy: {
         updatedAt: "desc",
-      },
+      }  
+     
     });
     return messages;
   }),

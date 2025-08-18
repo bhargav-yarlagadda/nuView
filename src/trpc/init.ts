@@ -1,4 +1,5 @@
-import { initTRPC } from '@trpc/server';
+import { auth } from '@clerk/nextjs/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import { cache } from 'react';
 import superjson from 'superjson';
 
@@ -6,8 +7,9 @@ export const createTRPCContext = cache(async () => {
   /**
    * @see: https://trpc.io/docs/server/context
    */
-  return { userId: 'user_123' };
+  return {auth: await auth() };
 });
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
@@ -15,7 +17,7 @@ export const createTRPCContext = cache(async () => {
 
 
 // creating a base tRPC 
-const t = initTRPC.create({
+const t = initTRPC.context<Context>().create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
@@ -23,8 +25,23 @@ const t = initTRPC.create({
 });
 // Base router and procedure helpers
 
-
-
+// creating a middleware
+const isAuthed = t.middleware(({next,ctx})=>{
+  if(!ctx.auth.userId){
+    throw new TRPCError({
+      code:"UNAUTHORIZED",
+      message:"Not Authenticated"
+    })
+  }
+  return next({
+    ctx:{
+      auth:ctx.auth
+    }
+  })
+})
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
+// creating a proteced procedure ,it has auth detailes as context
+// using isAuthed as middleware
+export const protectedProcedure = t.procedure.use(isAuthed)
