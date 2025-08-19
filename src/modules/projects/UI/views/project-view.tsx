@@ -15,6 +15,7 @@ import FragmentWebPlaceHolder from "../components/FragmentWebPlaceHolder";
 import { EyeIcon, CodeIcon, Crown } from "lucide-react";
 import FileExplorer from "../components/code/FileExplorer";
 import CustomUserButton from "@/modules/home/UI/CustomUserButton";
+import Link from "next/link";
 interface Props {
   projectId: string;
 }
@@ -65,7 +66,8 @@ export const ProjectView = ({ projectId }: Props) => {
               </TabsList>
               <div className="h-8 flex items-center gap-1">
                 {/* Upgrade Button */}
-                <button
+                <Link
+                href="/pricing"
                   className="
           flex items-center gap-2
           px-3 py-1.5
@@ -88,7 +90,7 @@ export const ProjectView = ({ projectId }: Props) => {
                     width={18}
                   />
                   <span className="hidden sm:inline">Upgrade</span>
-                </button>
+                </Link>
 
                 {/* User Button */}
                 <div className="mt-1">

@@ -23,7 +23,7 @@ const Layout = ({ children }: Props) => {
     
 
       {/* Content */}
-      <div className="relative z-10 flex-1 flex flex-col px-4 pb-4">
+      <div className="relative flex-1 flex flex-col px-4 pb-4">
         {children}
       </div>
     </main>

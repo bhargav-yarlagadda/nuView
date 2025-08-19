@@ -5,11 +5,12 @@ import z from "zod";
 import { toast } from "sonner";
 import TextareaAutoSize from "react-textarea-autosize";
 import { ArrowRight, ArrowUp, Loader2Icon } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/tRPC-wrapper";
 import { Form, FormField } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Usage } from "./Usage";
 interface Props {
   projectId: string;
 }
@@ -26,42 +27,47 @@ const MessageForm = ({ projectId }: Props) => {
       value: "",
     },
   });
-  const queryClient = useQueryClient()
+
+  const queryClient = useQueryClient();
   const message = form.watch("value");
   const [isFocused, setisFocused] = useState(false);
-  const [showUsage, setShowUsage] = useState(false);
-  const trpc = useTRPC()
-  const createMessage = useMutation(trpc.messages.create.mutationOptions({
-    onSuccess:()=>{
+  const trpc = useTRPC();
+  const { data: usage } = useQuery(trpc.usage.status.queryOptions());
+  const showUsage = !!usage;
+  const createMessage = useMutation(
+    trpc.messages.create.mutationOptions({
+      onSuccess: () => {
         form.reset();
         // invalidate previous messages since ne messages are added
-        queryClient.invalidateQueries(trpc.messages.getMessages.queryOptions({projectId:projectId}))
-    },
-    onError:(error)=>{
+        queryClient.invalidateQueries(
+          trpc.messages.getMessages.queryOptions({ projectId: projectId })
+        );
+      },
+      onError: (error) => {
         // redirect to pricing page
-        toast.error(error.message)
-    }
-  }))
-
-
-
-
-
-
+        toast.error(error.message);
+      },
+    })
+  );
 
   const handleSumbit = async (values: z.infer<typeof formSchema>) => {
-   const message = values.value.trim()
-   if( message === ""){
-        return 
-   }
-   await createMessage.mutateAsync({value:message,projectId:projectId})
+    const message = values.value.trim();
+    if (message === "") {
+      return;
+    }
+    await createMessage.mutateAsync({ value: message, projectId: projectId });
+  };
 
-};
-
-  const isPending = createMessage.isPending 
-  const isButtonDisabled = isPending || !form.formState.isValid 
+  const isPending = createMessage.isPending;
+  const isButtonDisabled = isPending || !form.formState.isValid;
   return (
     <Form {...form}>
+      {showUsage && (
+        <Usage
+          points={usage.remainingPoints}
+          msBeforeNext={usage.msBeforeNext}
+        />
+      )}
       <form
         className={cn(
           "relative border flex-col flex items-end p-3 mb-3  rounded-xl bg-sidebar dark:bg-sidebar transition-all",
@@ -76,7 +82,7 @@ const MessageForm = ({ projectId }: Props) => {
           render={({ field }) => (
             <TextareaAutoSize
               {...field}
-              disabled={isPending } // text area is disabled only if the network request is pending
+              disabled={isPending} // text area is disabled only if the network request is pending
               onFocus={() => setisFocused(true)}
               onBlur={() => setisFocused(false)}
               minRows={1}
@@ -108,8 +114,6 @@ const MessageForm = ({ projectId }: Props) => {
             </kbd>
             <ArrowRight size={14} />
           </div>
-
-          
 
           {/* Submit Button */}
           <Button

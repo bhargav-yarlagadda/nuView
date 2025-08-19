@@ -47,10 +47,11 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input,ctx }) => {
       const project = await prisma.project.findUnique({
         where: {
           id: input.id,
+          userId:ctx.auth.userId
         },
       });
       if(!project){
