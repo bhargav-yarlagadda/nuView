@@ -41,9 +41,16 @@ model Fragment {
 }
 
 model Usage {
-  key    String    @id
-  points Int
-  expire DateTime?
+  key       String    @id
+  points    Int
+  expire    DateTime?
+  planType  PlanType
+}
+
+
+enum PlanType {
+  FREE
+  PRO
 }
 
 enum MessageRole {

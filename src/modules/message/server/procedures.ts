@@ -34,17 +34,16 @@ export const messageRouter = createTRPCRouter({
       try {
         await consumeCredits(ctx.auth.userId,isProUser);
       } catch (error) {
-        if (error instanceof Error) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: error.message,
-          });
-        } else {
+        if (error instanceof Error && error.message === "Insufficient credits") {
           throw new TRPCError({
             code: "TOO_MANY_REQUESTS",
             message: "You have run out of free credits",
           });
         }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: error instanceof Error ? error.message : "Unknown error",
+        });
       }
       const createdMessage = await prisma.message.create({
         data: {
