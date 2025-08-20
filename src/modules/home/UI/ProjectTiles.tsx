@@ -49,7 +49,7 @@ const ProjectTiles = () => {
 
   return (
     <div className="flex flex-wrap justify-center gap-2">
-      {projects.map((project) => {
+      {projects.slice(0,5).map((project) => {
         const updatedAgo = formatDistanceToNow(new Date(project.updatedAt), {
           addSuffix: true,
         });

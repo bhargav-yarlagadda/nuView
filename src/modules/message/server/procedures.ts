@@ -2,6 +2,7 @@ import { inngest } from "@/inngest/client";
 import prisma from "@/lib/prisma";
 import { consumeCredits } from "@/lib/usage";
 import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
+import { auth } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 
@@ -27,9 +28,11 @@ export const messageRouter = createTRPCRouter({
           message: "Project not found",
         });
       }
+      const {has} = await auth()
+      const isProUser = has({plan:"pro"})
       // each message consumes a credit
       try {
-        await consumeCredits(ctx.auth.userId);
+        await consumeCredits(ctx.auth.userId,isProUser);
       } catch (error) {
         if (error instanceof Error) {
           throw new TRPCError({

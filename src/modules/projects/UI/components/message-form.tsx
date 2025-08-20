@@ -11,6 +11,8 @@ import { useTRPC } from "@/trpc/tRPC-wrapper";
 import { Form, FormField } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Usage } from "./Usage";
+import { useRouter } from "next/navigation";
+import { err } from "inngest/types";
 interface Props {
   projectId: string;
 }
@@ -21,6 +23,7 @@ const formSchema = z.object({
     .max(1500, { message: "message too long to proccess" }),
 });
 const MessageForm = ({ projectId }: Props) => {
+  const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,6 +37,7 @@ const MessageForm = ({ projectId }: Props) => {
   const trpc = useTRPC();
   const { data: usage } = useQuery(trpc.usage.status.queryOptions());
   const showUsage = !!usage;
+  
   const createMessage = useMutation(
     trpc.messages.create.mutationOptions({
       onSuccess: () => {
@@ -42,10 +46,16 @@ const MessageForm = ({ projectId }: Props) => {
         queryClient.invalidateQueries(
           trpc.messages.getMessages.queryOptions({ projectId: projectId })
         );
+        queryClient.invalidateQueries(
+          trpc.usage.status.queryOptions()
+        );
       },
       onError: (error) => {
         // redirect to pricing page
         toast.error(error.message);
+        if(error.data?.code === "TOO_MANY_REQUESTS"){
+          router.push("/pricing")
+        }
       },
     })
   );
@@ -62,9 +72,6 @@ const MessageForm = ({ projectId }: Props) => {
   const isButtonDisabled = isPending || !form.formState.isValid;
   return (
     <Form {...form}>
-      {
-        console.log(usage)
-      }
       {showUsage && (
         <Usage
           points={usage.remainingPoints}
