@@ -24,6 +24,10 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 - **📱 Responsive Design**: Mobile-first approach with adaptive layouts
 - **🔒 Sandboxed Execution**: Secure code execution in isolated environments
 - **📊 Code Analysis**: Syntax highlighting, file organization, and code exploration
+- **🔑 Authentication & SSO**: Clerk-powered auth with protected routes
+- **💳 Pricing & Billing**: Built-in pricing page using Clerk PricingTable
+- **🪙 Credit System**: Usage-based credits with FREE and PRO plans
+- **🧠 Contextual AI**: Per-project conversation context persisted across runs
 
 ## 🏗️ Technical Architecture
 
@@ -43,7 +47,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 - **Background Jobs**: Inngest for async task processing
 - **Code Execution**: E2B Code Interpreter for sandboxed environments
 - **AI Integration**: OpenAI GPT-4.1 with custom agent framework
-- **Authentication**: NextAuth.js (configured but not fully implemented)
+- **Authentication**: Clerk (user auth, route protection, and billing UI)
 
 ### Development Tools
 - **Package Manager**: npm/yarn/pnpm/bun support
@@ -68,7 +72,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 1. **Clone the repository**
    ```bash
    git clone <your-repo-url>
-   cd Lumina
+   cd nu-view
    ```
 
 2. **Install dependencies**
@@ -89,9 +93,9 @@ Lumina is an intelligent coding assistant that transforms natural language descr
    # Database Configuration (REQUIRED)
    DATABASE_URL="postgresql://username:password@localhost:5432/nuview_db"
    
-   # Next.js Configuration (REQUIRED)
-   NEXTAUTH_SECRET="your-secret-key-here"
-   NEXTAUTH_URL="http://localhost:3000"
+   # Clerk Authentication (REQUIRED)
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-publishable-key"
+   CLERK_SECRET_KEY="your-clerk-secret-key"
    
    # E2B Configuration (REQUIRED for code execution)
    E2B_API_KEY="your-e2b-api-key"
@@ -104,7 +108,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
    OPENAI_API_KEY="your-openai-api-key"
    
    # Sandbox Configuration (OPTIONAL)
-   SANDBOX_NAME="Lumina"
+   SANDBOX_NAME="nu-view"
    ```
 
 4. **Database Setup**
@@ -158,8 +162,8 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 | Variable | Description | Example | Purpose |
 |----------|-------------|---------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/db` | Database connectivity |
-| `NEXTAUTH_SECRET` | Secret key for NextAuth.js | `your-secret-key-here` | Authentication security |
-| `NEXTAUTH_URL` | Base URL of your application | `http://localhost:3000` | Authentication redirects |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key | `pk_test_...` | Client-side Clerk setup |
+| `CLERK_SECRET_KEY` | Clerk secret key | `sk_test_...` | Server-side Clerk auth |
 | `E2B_API_KEY` | API key for E2B code interpreter | `your-e2b-api-key` | Sandboxed code execution |
 | `INNGEST_EVENT_KEY` | Inngest event key | `your-inngest-event-key` | Background job events |
 | `INNGEST_SIGNING_KEY` | Inngest signing key | `your-inngest-signing-key` | Webhook security |
@@ -169,45 +173,58 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 
 | Variable | Description | Default | Purpose |
 |----------|-------------|---------|---------|
-| `SANDBOX_NAME` | E2B sandbox identifier | `Lumina` | Sandbox naming |
+| `SANDBOX_NAME` | E2B sandbox identifier | `nu-view` | Sandbox naming |
 | `NEXT_PUBLIC_APP_URL` | Public app URL | `http://localhost:3000` | Client-side API calls |
 
 ## 🗄️ Database Schema
 
-The application uses PostgreSQL with Prisma ORM. Here's the complete data model:
+The application uses PostgreSQL with Prisma ORM. Here's the current data model:
 
 ### Core Models
 
 ```prisma
 model Project {
   id        String    @id @default(uuid())
-  name      String    // Auto-generated slug
+  name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  messages  Message[] // One-to-many relationship
+  userId    String
+  messages  Message[]
 }
 
 model Message {
   id        String      @id @default(uuid())
-  content   String      // Message text content
-  role      MessageRole // USER or ASSISTANT
-  type      MessageType // RESULT or ERROR
+  content   String
+  role      MessageRole
+  type      MessageType
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  fragment  Fragment?   // Optional code fragment
-  projectId String      // Foreign key to Project
-  project  Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  fragment  Fragment?
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Fragment {
   id         String   @id @default(uuid())
-  messageId  String   @unique // One-to-one with Message
-  sandboxUrl String   // Live preview URL
-  title      String   // Fragment title
-  files      Json     // Generated code files
+  messageId  String   @unique
+  sandboxUrl String
+  title      String
+  files      Json
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   message    Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model Usage {
+  key       String    @id
+  points    Int
+  expire    DateTime?
+  planType  PlanType
+}
+
+enum PlanType {
+  FREE
+  PRO
 }
 
 enum MessageRole {
@@ -235,6 +252,10 @@ src/
 │   ├── project/                  # Project view routes
 │   │   └── [projectId]/         # Dynamic project route
 │   │       └── page.tsx         # Project view page
+│   ├── (auth)/                   # Auth routes (Clerk)
+│   │   ├── sign-in/[[...sign-in]]/page.tsx
+│   │   └── sign-up/[[...sign-up]]/page.tsx
+│   └── sso-callback/page.tsx     # SSO callback route
 │   ├── favicon.ico              # App icon
 │   ├── globals.css              # Global styles
 │   ├── layout.tsx               # Root layout with providers
@@ -290,6 +311,9 @@ src/
 │           │   └── ProjectHeader.tsx      # Project header
 │           └── views/         # Project view components
 │               └── project-view.tsx       # Main project view
+│   └── usage/                 # Usage & credits module
+│       └── server/
+│           └── procedure.ts   # Usage status endpoint
 ├── trpc/                     # tRPC configuration
 │   ├── init.ts              # tRPC initialization
 │   ├── query-client.ts      # React Query client
@@ -314,6 +338,9 @@ The application uses tRPC for type-safe API communication between client and ser
 - **`create`**: Create new message in project
 - **`getMessages`**: Fetch all messages for a project
 
+#### Usage Routes (`/api/trpc/usage.*`)
+- **`status`**: Get current credit usage, plan, and reset time
+
 ### Inngest Background Jobs
 
 The system uses Inngest for handling asynchronous AI coding tasks:
@@ -323,11 +350,12 @@ The system uses Inngest for handling asynchronous AI coding tasks:
 - **Purpose**: AI-powered code generation
 - **Process**:
   1. Creates E2B sandbox environment
-  2. Initializes AI coding agent with specialized tools
-  3. Processes user request through AI network
-  4. Generates and saves code files
-  5. Creates live preview sandbox
-  6. Saves results to database
+  2. Initializes AI coding agent with specialized tools and persisted state
+  3. Loads previous project messages to provide context
+  4. Processes user request through agent network (up to 20 iterations)
+  5. Generates and saves code files
+  6. Creates live preview sandbox
+  7. Saves results to database
 
 #### AI Agent Tools
 - **`terminal`**: Execute shell commands in sandbox
@@ -396,7 +424,7 @@ The AI system uses carefully crafted prompts that:
 - **Database**: PostgreSQL with Prisma ORM
 - **Background Jobs**: Inngest for async task processing
 - **File Storage**: E2B sandbox for temporary code storage
-- **Session Management**: NextAuth.js for authentication
+- **Session Management**: Clerk for authentication
 
 ### Real-time Updates
 - **Polling**: 5-second intervals for message updates
@@ -412,9 +440,9 @@ The AI system uses carefully crafted prompts that:
 # Database
 DATABASE_URL="postgresql://user:pass@host:port/database"
 
-# Authentication
-NEXTAUTH_SECRET="production-secret-key"
-NEXTAUTH_URL="https://yourdomain.com"
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
+CLERK_SECRET_KEY="sk_live_..."
 
 # AI Services
 E2B_API_KEY="production-e2b-key"
@@ -539,6 +567,11 @@ trpc.projects.getProjects.query()
 ```
 
 #### Messages
+#### Usage
+```typescript
+// Get credit usage status
+trpc.usage.status.query()
+```
 ```typescript
 // Create message
 trpc.messages.create.mutate({ 
@@ -652,6 +685,7 @@ When reporting issues, please include:
 - **Inngest**: For background job processing
 - **E2B**: For sandboxed code execution
 - **OpenAI**: For AI capabilities
+- **Clerk**: For authentication and billing UI
 - **Shadcn**: For UI component library
 - **Tailwind CSS**: For utility-first CSS framework
 
