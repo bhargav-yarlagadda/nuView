@@ -183,11 +183,16 @@
 // inngest-functions.ts (or wherever your function is defined)
 import { inngest } from "./client";
 import { Sandbox } from "@e2b/code-interpreter";
-import { openai, createAgent, createTool, AnyZodType, createNetwork } from "@inngest/agent-kit";
+import { openai, createAgent, createTool, AnyZodType, createNetwork,type Message, createState } from "@inngest/agent-kit";
 import { getSandBox, lastAssistantTextMessageContent } from "./utils";
 import { z } from "zod";
 import { PROMPT } from "./prompts";
 import prisma from "@/lib/prisma";
+
+interface AgentState{
+  summary:string, 
+  files:{[path:string]: string}
+}
 
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
@@ -201,6 +206,35 @@ export const helloWorld = inngest.createFunction(
     );
       return sandBox.sandboxId;
     });
+
+    const previousMessages = await step.run("get-previous-messages",async ()=>{
+      const formattedMessages:Message[] = []
+      const messages = await prisma.message.findMany({
+        where:{
+          projectId:event.data.projectId
+        },
+        orderBy:{
+          createdAt:"desc" // change to asc if AI is not perfoming well or being confused from pervious
+        }
+      })
+      for(const message of messages){
+        formattedMessages.push({
+          type:"text",
+          role:message.role === "ASSISTANT"?"assistant":"user",
+          content:message.content
+        })
+      }
+      return formattedMessages
+    })
+    const state = createState<AgentState>({
+      summary:"",
+      files:{}
+    },
+    {
+      messages:previousMessages
+    }
+    
+  )
 
     const codeAgent = createAgent({
       name: "code-agent",
@@ -313,6 +347,7 @@ export const helloWorld = inngest.createFunction(
     const network = createNetwork({
       name: "coding-agent-network",
       agents: [codeAgent],
+      defaultState:state,
       maxIter: 20, // Increased for complex tasks
       router: async ({ network }) => {
         const summary = network.state.data.summary;
@@ -323,7 +358,7 @@ export const helloWorld = inngest.createFunction(
       },
     });
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(event.data.value,{state:state});
 
     const sandBoxURL = await step.run("get-sandbox-url", async () => {
       const sandBox = await getSandBox(sandBoxId);

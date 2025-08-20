@@ -16,10 +16,13 @@ import { EyeIcon, CodeIcon, Crown } from "lucide-react";
 import FileExplorer from "../components/code/FileExplorer";
 import CustomUserButton from "@/modules/home/UI/CustomUserButton";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 interface Props {
   projectId: string;
 }
-export const ProjectView = ({ projectId }: Props) => {
+export const  ProjectView = ({ projectId }: Props) => {
+  const {has} = useAuth()
+  const isProUser = has && has({plan:"pro"})
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"Preview" | "Code">("Preview");
   return (
@@ -66,7 +69,9 @@ export const ProjectView = ({ projectId }: Props) => {
               </TabsList>
               <div className="h-8 flex items-center gap-1">
                 {/* Upgrade Button */}
-                <Link
+                {
+                  !isProUser && (
+                    <Link
                 href="/pricing"
                   className="
           flex items-center gap-2
@@ -92,6 +97,8 @@ export const ProjectView = ({ projectId }: Props) => {
                   <span className="hidden sm:inline">Upgrade</span>
                 </Link>
 
+                  )
+                }
                 {/* User Button */}
                 <div className="mt-1">
                   <CustomUserButton />
