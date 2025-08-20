@@ -29,7 +29,7 @@ export const messageRouter = createTRPCRouter({
       }
       // each message consumes a credit
       try {
-        await consumeCredits();
+        await consumeCredits(ctx.auth.userId);
       } catch (error) {
         if (error instanceof Error) {
           throw new TRPCError({

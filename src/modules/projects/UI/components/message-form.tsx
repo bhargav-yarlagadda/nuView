@@ -62,6 +62,9 @@ const MessageForm = ({ projectId }: Props) => {
   const isButtonDisabled = isPending || !form.formState.isValid;
   return (
     <Form {...form}>
+      {
+        console.log(usage)
+      }
       {showUsage && (
         <Usage
           points={usage.remainingPoints}
