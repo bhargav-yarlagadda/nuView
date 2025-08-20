@@ -7,13 +7,14 @@ import z from "zod";
 import { toast } from "sonner";
 import TextareaAutoSize from "react-textarea-autosize";
 import { ArrowRight, ArrowUp, Loader2Icon } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/tRPC-wrapper";
 import { Form, FormField } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import { Usage } from "@/modules/projects/UI/components/Usage";
 
 const formSchema = z.object({
   value: z
@@ -33,6 +34,7 @@ const predefinedPrompts = [
 
 const ProjectForm = () => {
   const router = useRouter();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { value: "" },
@@ -41,9 +43,11 @@ const ProjectForm = () => {
   const queryClient = useQueryClient();
   const message = form.watch("value");
   const [isFocused, setIsFocused] = useState(false);
-  const [showUsage, setShowUsage] = useState(false);
   const clerk = useClerk()
   const trpc = useTRPC();
+
+    const { data: usage } = useQuery(trpc.usage.status.queryOptions());
+    const showUsage = !!usage;
   const createProject = useMutation(
     trpc.projects.create.mutationOptions({
       onSuccess: (data) => {
@@ -83,11 +87,13 @@ const ProjectForm = () => {
 
   return (
     <div>
-
+     {
+      showUsage && <Usage points={usage.remainingPoints} msBeforeNext={usage.msBeforeNext} />
+     }
       <Form {...form}>
         <form
           className={cn(
-            "relative border flex-col flex items-end p-3 mb-3 rounded-xl bg-sidebar dark:bg-sidebar transition-all",
+            "relative border flex-col flex items-end p-3 mb-3 rounded-b-xl bg-sidebar dark:bg-sidebar transition-all",
             isFocused && "shadow-xs",
             showUsage && "rounded-t-none"
           )}
@@ -106,6 +112,7 @@ const ProjectForm = () => {
                 className="w-full focus:outline-none placeholder:text-muted-foreground text-sm resize-none"
                 placeholder="Send a message..."
                 maxRows={10}
+            
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
