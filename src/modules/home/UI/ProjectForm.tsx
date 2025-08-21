@@ -47,6 +47,7 @@ const ProjectForm = () => {
   const trpc = useTRPC();
 
     const { data: usage } = useQuery(trpc.usage.status.queryOptions());
+    
     const showUsage = !!usage;
   const createProject = useMutation(
     trpc.projects.create.mutationOptions({
@@ -55,7 +56,9 @@ const ProjectForm = () => {
         queryClient.invalidateQueries(
           trpc.usage.status.queryOptions()
         );
+
         queryClient.invalidateQueries(trpc.projects.getProjects.queryOptions());
+
         router.push(`/project/${data.id}`);
 
       },

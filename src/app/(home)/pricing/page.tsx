@@ -3,6 +3,7 @@
 import React from "react";
 import { PricingTable } from "@clerk/nextjs";
 import { Sparkles, ShieldCheck, Clock } from "lucide-react";
+import { TRPCError } from "@trpc/server";
 
 const Page = () => {
   return (

@@ -17,6 +17,7 @@ import FileExplorer from "../components/code/FileExplorer";
 import CustomUserButton from "@/modules/home/UI/CustomUserButton";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { TRPCError } from "@trpc/server";
 interface Props {
   projectId: string;
 }
@@ -50,6 +51,7 @@ export const  ProjectView = ({ projectId }: Props) => {
           minSize={50}
           className="flex flex-col min-h-0"
         >
+
           <Tabs
             className="h-full flex w-full flex-col"
             defaultValue="Preview"

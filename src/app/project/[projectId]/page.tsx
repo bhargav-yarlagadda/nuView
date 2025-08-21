@@ -1,6 +1,7 @@
 import { ProjectView } from "@/modules/projects/UI/views/project-view";
 import { getQueryClient, trpc } from "@/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {ErrorBoundary} from "react-error-boundary"
 
 interface Props {
   params: Promise<{
@@ -22,7 +23,9 @@ const Page = async ({ params }: Props) => {
   );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      {/* <ErrorBoundary fallback={<ErrorFallback/>} > */}
       <ProjectView projectId={projectId} />
+      {/* </ErrorBoundary> */}
     </HydrationBoundary>
   );
 };

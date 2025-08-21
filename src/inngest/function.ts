@@ -1,13 +1,11 @@
 // import { inngest } from "./client";
 // import {Sandbox} from "@e2b/code-interpreter"
-// // inngest background jobs 
+// // inngest background jobs
 // import {   openai, createAgent, createTool, AnyZodType, createNetwork } from "@inngest/agent-kit";
 // import { getSandBox, lastAssistantTextMessageContent } from "./utils";
 // import {z} from "zod";
 // import { PROMPT } from "./prompts";
 // import prisma from "@/lib/prisma";
-
-
 
 // export const helloWorld = inngest.createFunction(
 //   { id: "hello-world" },
@@ -22,10 +20,10 @@
 //       description:"You are an expert coding agent",
 //       system:PROMPT,
 //       model: openai({ model: "gpt-4o",
-        
+
 //         defaultParameters:{
 //           temperature:0.1,
-          
+
 //         }
 //         }),
 //       tools:[
@@ -104,7 +102,7 @@
 //                   path:string,
 //                   content:string
 //                 }[]= []
-                
+
 //                 for(const file of files){
 //                   const content = await sandBox.files.read(file)
 //                   contents.push({path:file,content})
@@ -117,7 +115,7 @@
 //           }
 
 //         })
-        
+
 //       ],
 //       lifecycle:{
 //         onResponse:async ({result,network})=>{
@@ -137,9 +135,9 @@
 //       agents:[codeAgent],
 //       maxIter:10, // if performance becomes poor please update this to 15.
 //       router:async({network})=>{
-//         const summary  = network.state.data.summary 
+//         const summary  = network.state.data.summary
 //         if(summary){
-//           return  
+//           return
 //         }
 //         return codeAgent
 //       }
@@ -150,7 +148,7 @@
 //       const host =  sandBox.getHost(3000)
 //       return `https://${host}`
 //     })
-    
+
 //     await step.run("save-result",async ()=>{
 //       return await prisma.message.create({
 //         data:{
@@ -162,7 +160,7 @@
 //             create:{
 //               sandboxUrl:sandBoxURL,
 //               title:"Fragment",
-//               files:result.state.data.files 
+//               files:result.state.data.files
 //             }
 //           }
 
@@ -179,19 +177,26 @@
 //   },
 // );
 
-
 // inngest-functions.ts (or wherever your function is defined)
 import { inngest } from "./client";
 import { Sandbox } from "@e2b/code-interpreter";
-import { openai, createAgent, createTool, AnyZodType, createNetwork,type Message, createState } from "@inngest/agent-kit";
+import {
+  openai,
+  createAgent,
+  createTool,
+  AnyZodType,
+  createNetwork,
+  type Message,
+  createState,
+} from "@inngest/agent-kit";
 import { getSandBox, lastAssistantTextMessageContent } from "./utils";
 import { z } from "zod";
 import { PROMPT } from "./prompts";
 import prisma from "@/lib/prisma";
 
-interface AgentState{
-  summary:string, 
-  files:{[path:string]: string}
+interface AgentState {
+  summary: string;
+  files: { [path: string]: string };
 }
 
 export const helloWorld = inngest.createFunction(
@@ -199,42 +204,48 @@ export const helloWorld = inngest.createFunction(
   { event: "test/hello.world" },
   async ({ event, step }) => {
     const sandBoxId = await step.run("get-sandbox-id", async () => {
-      const sandBox = await Sandbox.create(process.env.SANDBOX_NAME || "nu-view",
-      {
-        timeoutMs:600_000 ,
-      }
-    );
+      const sandBox = await Sandbox.create(
+        process.env.SANDBOX_NAME || "nu-view",
+        {
+          timeoutMs: 600_000,
+        }
+      );
       return sandBox.sandboxId;
     });
 
-    const previousMessages = await step.run("get-previous-messages",async ()=>{
-      const formattedMessages:Message[] = []
-      const messages = await prisma.message.findMany({
-        where:{
-          projectId:event.data.projectId
-        },
-        orderBy:{
-          createdAt:"desc" // change to asc if AI is not perfoming well or being confused from pervious
+    const previousMessages = await step.run(
+      "get-previous-messages",
+      async () => {
+        const formattedMessages: Message[] = [];
+        const messages = await prisma.message.findMany({
+          where: {
+            projectId: event.data.projectId,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 7,
+        });
+        for (const message of messages) {
+          formattedMessages.push({
+            type: "text",
+            role: message.role === "ASSISTANT" ? "assistant" : "user",
+            content: message.content,
+          });
         }
-      })
-      for(const message of messages){
-        formattedMessages.push({
-          type:"text",
-          role:message.role === "ASSISTANT"?"assistant":"user",
-          content:message.content
-        })
+        // we need last 5 messages
+        return formattedMessages.reverse();
       }
-      return formattedMessages
-    })
-    const state = createState<AgentState>({
-      summary:"",
-      files:{}
-    },
-    {
-      messages:previousMessages
-    }
-    
-  )
+    );
+    const state = createState<AgentState>(
+      {
+        summary: "",
+        files: {},
+      },
+      {
+        messages: previousMessages,
+      }
+    );
 
     const codeAgent = createAgent({
       name: "code-agent",
@@ -270,10 +281,19 @@ export const helloWorld = inngest.createFunction(
                     buffers.stderr += data;
                   },
                 });
-                return { stdout: buffers.stdout || result.stdout, stderr: buffers.stderr };
+                return {
+                  stdout: buffers.stdout || result.stdout,
+                  stderr: buffers.stderr,
+                };
               } catch (error: any) {
-                console.error(`Command failed: ${error} \n stdout: ${buffers.stdout} \n stderr: ${buffers.stderr}`);
-                return { error: `Command failed: ${error}`, stdout: buffers.stdout, stderr: buffers.stderr };
+                console.error(
+                  `Command failed: ${error} \n stdout: ${buffers.stdout} \n stderr: ${buffers.stderr}`
+                );
+                return {
+                  error: `Command failed: ${error}`,
+                  stdout: buffers.stdout,
+                  stderr: buffers.stderr,
+                };
               }
             });
           },
@@ -333,7 +353,8 @@ export const helloWorld = inngest.createFunction(
       ],
       lifecycle: {
         onResponse: async ({ result, network }) => {
-          const lastAssistantMessageText = lastAssistantTextMessageContent(result);
+          const lastAssistantMessageText =
+            lastAssistantTextMessageContent(result);
           if (lastAssistantMessageText && network) {
             if (lastAssistantMessageText.includes("<task_summary>")) {
               network.state.data.summary = lastAssistantMessageText;
@@ -347,7 +368,7 @@ export const helloWorld = inngest.createFunction(
     const network = createNetwork({
       name: "coding-agent-network",
       agents: [codeAgent],
-      defaultState:state,
+      defaultState: state,
       maxIter: 20, // Increased for complex tasks
       router: async ({ network }) => {
         const summary = network.state.data.summary;
@@ -358,7 +379,7 @@ export const helloWorld = inngest.createFunction(
       },
     });
 
-    const result = await network.run(event.data.value,{state:state});
+    const result = await network.run(event.data.value, { state: state });
 
     const sandBoxURL = await step.run("get-sandbox-url", async () => {
       const sandBox = await getSandBox(sandBoxId);
