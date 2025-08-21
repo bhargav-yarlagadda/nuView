@@ -35,7 +35,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS v4 with custom design system
-- **UI Components**: Radix UI primitives with custom styling
+- **UI Components**: Shad Cn UI primitives with custom styling
 - **State Management**: TanStack Query (React Query) + tRPC
 - **Forms**: React Hook Form with Zod validation
 - **Icons**: Lucide React
@@ -44,6 +44,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 ### Backend & Infrastructure
 - **Database**: PostgreSQL with Prisma ORM
 - **API Layer**: tRPC for type-safe API calls
+- **Background Jobs and AI Agent workflow**: Inngest 
 - **Background Jobs**: Inngest for async task processing
 - **Code Execution**: E2B Code Interpreter for sandboxed environments
 - **AI Integration**: OpenAI GPT-4.1 with custom agent framework
@@ -71,7 +72,7 @@ Lumina is an intelligent coding assistant that transforms natural language descr
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+  gh repo clone bhargav-yarlagadda/nuView
    cd nu-view
    ```
 
@@ -119,7 +120,8 @@ Lumina is an intelligent coding assistant that transforms natural language descr
    # Push database schema
    npx prisma db push
    
-   # (Optional) View database in Prisma Studio
+   # Push database schema
+   npx prisma migrate dev --name migration name    # (Optional) View database in Prisma Studio
    npx prisma studio
    ```
 
@@ -432,179 +434,6 @@ The AI system uses carefully crafted prompts that:
 - **Background Sync**: Inngest job status monitoring
 - **Live Preview**: Real-time sandbox updates
 
-## 🚀 Deployment
-
-### Production Environment Variables
-
-```env
-# Database
-DATABASE_URL="postgresql://user:pass@host:port/database"
-
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_..."
-CLERK_SECRET_KEY="sk_live_..."
-
-# AI Services
-E2B_API_KEY="production-e2b-key"
-OPENAI_API_KEY="production-openai-key"
-
-# Background Jobs
-INNGEST_EVENT_KEY="production-inngest-key"
-INNGEST_SIGNING_KEY="production-inngest-signing-key"
-
-# App Configuration
-NEXT_PUBLIC_APP_URL="https://yourdomain.com"
-```
-
-### Deployment Platforms
-
-#### Vercel (Recommended)
-1. Connect GitHub repository
-2. Configure environment variables
-3. Deploy automatically on push
-4. Monitor Inngest functions
-
-#### Other Platforms
-- **Netlify**: Static export with API routes
-- **Railway**: Full-stack deployment
-- **DigitalOcean**: App Platform deployment
-- **AWS**: Amplify or ECS deployment
-
-### Inngest Production Setup
-1. **Self-Hosted**: Deploy Inngest server
-2. **Cloud**: Use Inngest Cloud service
-3. **Monitoring**: Set up alerts and logging
-4. **Scaling**: Configure auto-scaling policies
-
-## 🔧 Development Workflow
-
-### Local Development
-1. **Start Services**: Next.js + Inngest + PostgreSQL
-2. **Environment**: Configure local environment variables
-3. **Database**: Use local PostgreSQL instance
-4. **AI Testing**: Use development API keys
-5. **Hot Reload**: Next.js development server
-
-### Code Quality
-- **TypeScript**: Strict type checking
-- **ESLint**: Code quality enforcement
-- **Prettier**: Code formatting (implied)
-- **Testing**: Component and integration tests (recommended)
-
-### Git Workflow
-1. **Feature Branches**: Create for new features
-2. **Commit Messages**: Conventional commit format
-3. **Pull Requests**: Code review and testing
-4. **Deployment**: Automatic deployment on merge
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### Inngest Server Not Starting
-```bash
-# Check if Inngest CLI is installed
-npm install -g @inngest/cli
-
-# Start development server
-npx inngest-cli@latest dev
-```
-
-#### Database Connection Issues
-```bash
-# Check PostgreSQL status
-sudo systemctl status postgresql
-
-# Verify connection string
-npx prisma db pull
-
-# Reset database
-npx prisma db push --force-reset
-```
-
-#### AI Generation Failing
-- Verify OpenAI API key
-- Check E2B API key and quotas
-- Monitor Inngest function logs
-- Verify environment variables
-
-#### Build Errors
-```bash
-# Clear Next.js cache
-rm -rf .next
-
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-
-# Regenerate Prisma client
-npx prisma generate
-```
-
-### Debug Mode
-```bash
-# Enable debug logging
-DEBUG=* npm run dev
-
-# Inngest debug mode
-INNGEST_DEV=true npx inngest-cli@latest dev
-```
-
-## 📚 API Reference
-
-### tRPC Procedures
-
-#### Projects
-```typescript
-// Create project
-trpc.projects.create.mutate({ value: "Create a todo app" })
-
-// Get project
-trpc.projects.getOneProject.query({ id: "project-id" })
-
-// List projects
-trpc.projects.getProjects.query()
-```
-
-#### Messages
-#### Usage
-```typescript
-// Get credit usage status
-trpc.usage.status.query()
-```
-```typescript
-// Create message
-trpc.messages.create.mutate({ 
-  value: "Add dark mode", 
-  projectId: "project-id" 
-})
-
-// Get messages
-trpc.messages.getMessages.query({ projectId: "project-id" })
-```
-
-### Inngest Functions
-
-#### Event Schema
-```typescript
-{
-  name: "test/hello.world",
-  data: {
-    value: string,        // User request
-    projectId: string     // Project identifier
-  }
-}
-```
-
-#### Function Response
-```typescript
-{
-  url: string,           // Sandbox preview URL
-  title: string,         // Fragment title
-  files: Record<string, string>, // Generated code files
-  summary: string        // AI task summary
-}
-```
 
 ## 🔮 Future Roadmap
 
@@ -693,4 +522,4 @@ When reporting issues, please include:
 
 **Built with ❤️ using Next.js, TypeScript, and modern web technologies.**
 
-*Lumina - Transform your ideas into stunning websites with AI-powered development.*
+*Nu-View - Transform your ideas into stunning websites with AI-powered development.*
